@@ -27,18 +27,21 @@ window.DASH_CONFIG = {
 本地调试可用临时覆盖（不提交）：
 - URL 参数：`index.html?api=http://127.0.0.1:8000`
 - localStorage：键 `transplant_dashboard_api_base`
+- **页面内直接修改**：令牌门禁里提供了「数据服务地址」输入框，填入后即写入 localStorage，无需改代码。
 
 ## 访问方式
 1. 打开 Pages 站点后，页面会要求输入 **Bearer 令牌**（即私有仓库 `secrets/.env` 里的 `API_TOKEN`）。
 2. 令牌仅保存在本浏览器 `localStorage`，不上传、不入库。
 3. 输入正确后即从私有 API 拉取数据并渲染全部看板。
+4. 若私有隧道地址变更，直接在门禁页的「数据服务地址」框里更新即可（launcher 也会自动同步 `config.js`）。
 
 ## 部署到 GitHub Pages
 1. 将本仓库推送到 GitHub（公开仓库）。
 2. Settings → Pages → Build and deployment → Source 选择 **GitHub Actions**。
 3. 推送到 `main` 分支即自动部署（`.github/workflows/deploy.yml`，无需任何 Secrets）。
-4. 在私有仓库侧把 `ALLOW_ORIGINS` 设为你的 Pages 实际地址，例如：
-   `https://<你的用户名>.github.io/transplantation-dashboard-web`
+4. 在私有仓库侧把 `ALLOW_ORIGINS` 设为你的 Pages **源**（⚠️ 只写域名，**不要带仓库路径**）：
+   `https://<你的用户名>.github.io`
+   > 浏览器发送的 `Origin` 头不含路径；若误写成 `.../transplantation-dashboard-web`，跨域会失败。
 
 ## 安全边界
 - 前端永远拿不到 `data/` 原始数据，只接收结构化 bundle。

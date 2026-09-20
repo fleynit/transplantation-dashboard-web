@@ -111,6 +111,7 @@ footer{text-align:center;color:var(--ink-3);font-size:12px;padding:22px}
 .gate button{padding:10px 18px;border:none;background:var(--primary);color:#fff;border-radius:var(--radius-sm);font-size:14px;font-weight:600;cursor:pointer}
 .gate button:hover{background:var(--primary-600)}
 .gate .err{color:var(--alert);font-size:12.5px;margin-top:8px;min-height:16px}
+.gate .muted{color:var(--ink-2);font-size:12px}
 .status{margin:18px auto;max-width:600px;text-align:center;font-size:13px;color:var(--ink-2)}
 .loader{display:inline-block;width:16px;height:16px;border:2px solid var(--primary-weak);border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite;vertical-align:-3px;margin-right:8px}
 @keyframes spin{to{transform:rotate(360deg)}}

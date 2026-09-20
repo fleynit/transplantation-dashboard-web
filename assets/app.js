@@ -47,6 +47,7 @@
   }
   function getToken() { return localStorage.getItem(CFG.TOKEN_KEY || "transplant_dashboard_token") || ""; }
   function setToken(t) { localStorage.setItem(CFG.TOKEN_KEY || "transplant_dashboard_token", t); }
+  function setApiBase(u) { localStorage.setItem(CFG.API_BASE_KEY || "transplant_dashboard_api_base", u.replace(/\/$/, "")); }
 
   async function apiFetch(path) {
     var token = getToken();
@@ -73,10 +74,16 @@
       '令牌仅保存在本浏览器 localStorage，不会上传到任何服务器或代码仓库。</p>' +
       '<div class="row"><input id="tok" type="password" placeholder="Bearer Token" autocomplete="off">' +
       '<button id="tok-go">加载</button></div>' +
+      '<p class="muted" style="margin:10px 0 4px;font-size:12px">数据服务地址（如隧道地址变更，可在此修正）</p>' +
+      '<div class="row"><input id="apibase" type="text" placeholder="https://xxxx.serveousercontent.com" autocomplete="off"></div>' +
       '<div class="err">' + esc(errMsg || "") + "</div></div>";
+    var ab = el("apibase");
+    if (ab) ab.value = apiBase();
     var go = function () {
       var v = el("tok").value.trim();
       if (!v) { host.querySelector(".err").textContent = "请输入令牌"; return; }
+      var u = (el("apibase").value || "").trim();
+      if (u) setApiBase(u);
       setToken(v); host.style.display = "none"; boot();
     };
     el("tok-go").onclick = go;
@@ -97,7 +104,14 @@
       clearStatus();
     } catch (e) {
       if (e.status === 401) { setToken(""); showGate("令牌无效或已失效，请重新输入。"); }
-      else { setStatus("error", "加载失败：" + (e && e.message ? e.message : e)); }
+      else if (e.status === 403) { showGate("该地址拒绝了本站请求（来源未在白名单 ALLOW_ORIGINS 中）。"); }
+      else {
+        setStatus("error",
+          "无法连接数据服务（" + apiBase() + "）。常见原因：私有服务未启动、隧道已断开或地址已变更。" +
+          "请重新打开 launcher（deploy/start.bat），并把最新地址填入下方输入框。" +
+          "　原始错误：" + (e && e.message ? e.message : e));
+        showGate("数据服务不可达，可在下方修正地址与令牌后重试。");
+      }
     }
   }
 
