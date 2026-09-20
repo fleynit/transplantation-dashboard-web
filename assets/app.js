@@ -51,7 +51,10 @@
 
   async function apiFetch(path) {
     var token = getToken();
-    var res = await fetch(apiBase() + path, { headers: { "Authorization": "Bearer " + token } });
+    // serveo.net 免费隧道的浏览器请求会被插入「拦截警告页」，会顶替我们的 JSON。
+    // 该请求头是 serveo 官方的 API/自动访问绕过方式（见 serveo.net/docs#browser-warning）。
+    var headers = { "Authorization": "Bearer " + token, "serveo-skip-browser-warning": "true" };
+    var res = await fetch(apiBase() + path, { headers: headers });
     if (!res.ok) { var e = new Error("HTTP " + res.status); e.status = res.status; throw e; }
     return res.json();
   }
