@@ -70,7 +70,16 @@ a{color:inherit}
 .paused{background:#f1f4f5;color:var(--ink-3)}
 .paused .flag.ab-low{color:var(--ink-3)}
 .note{font-size:12px;color:var(--ink-2);line-height:1.5}
-.ind{font-size:12px;color:var(--ink-2);line-height:1.5;max-width:240px;word-break:break-word}
+/* 用药清单：固定列宽，适应性列作为「用途 callout」突出显示 */
+.tbl.meds{table-layout:fixed}
+.tbl.meds th,.tbl.meds td{vertical-align:top}
+.tbl.meds th.c{text-align:center}
+.tbl.meds .name{font-weight:600;color:var(--ink)}
+.tbl.meds td.ind{padding:8px 9px}
+.ind .ind-block{display:block;font-size:12px;line-height:1.55;color:var(--ink-1);background:var(--primary-weak2);border-left:3px solid var(--primary);border-radius:6px;padding:7px 9px}
+.ind .ind-block::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--primary);margin-right:7px;vertical-align:middle}
+.paused .ind .ind-block{background:#eceff0;border-left-color:var(--ink-3);color:var(--ink-3)}
+.paused .ind .ind-block::before{background:var(--ink-3)}
 .badge{font-size:11px;padding:2px 9px;border-radius:999px;font-weight:600;margin-left:8px;white-space:nowrap}
 .b-now{background:var(--alert-weak);color:var(--alert)}
 .b-low{background:var(--good-weak);color:#157a52}
