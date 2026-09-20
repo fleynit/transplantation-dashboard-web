@@ -210,13 +210,14 @@
     m.meds.forEach(function (md) {
       var name = md.name || "—", dose = md.dose || "—", freq = md.freq || "—",
           time = md.time || "—", qty = (md.qty == null || md.qty === "") ? "—" : String(md.qty),
-          note = md.note ? md.note.replace(/\n/g, "<br>") : "—";
+          note = md.note ? md.note.replace(/\n/g, "<br>") : "—",
+          indication = md.indication ? md.indication : "—";
       var paused = (String(qty) === "0") || ((md.note || "").indexOf("暂停") >= 0);
       var cls = paused ? " paused" : "";
       var badge = paused ? ' <span class="flag ab-low">暂停</span>' : "";
       rows += "<tr class='" + cls + "'><td>" + esc(name) + badge + "</td><td class='num'>" + esc(dose) +
         "</td><td>" + esc(freq) + "</td><td>" + esc(time) + "</td><td class='num'>" + esc(qty) +
-        "</td><td class='note'>" + note + "</td></tr>";
+        "</td><td class='note'>" + note + "</td><td class='ind'>" + esc(indication) + "</td></tr>";
     });
     return '' +
       '<div class="section-t">当前用药清单（药疗单）</div>' +

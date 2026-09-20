@@ -70,6 +70,7 @@ a{color:inherit}
 .paused{background:#f1f4f5;color:var(--ink-3)}
 .paused .flag.ab-low{color:var(--ink-3)}
 .note{font-size:12px;color:var(--ink-2);line-height:1.5}
+.ind{font-size:12px;color:var(--ink-2);line-height:1.5;max-width:240px;word-break:break-word}
 .badge{font-size:11px;padding:2px 9px;border-radius:999px;font-weight:600;margin-left:8px;white-space:nowrap}
 .b-now{background:var(--alert-weak);color:var(--alert)}
 .b-low{background:var(--good-weak);color:#157a52}
