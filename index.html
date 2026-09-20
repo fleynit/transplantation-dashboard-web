@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>检验报告筛查与趋势看板</title>
+  <link rel="stylesheet" href="assets/app.css">
+  <script src="assets/chart.umd.min.js"></script>
+  <script src="assets/config.js"></script>
+</head>
+<body>
+  <header class="app-header">
+    <div class="bar">
+      <span class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h3l2-6 4 12 2-6h7"/></svg></span>
+      <div>
+        <h1>检验报告筛查与趋势看板</h1>
+        <p class="sub">前端公开 · 数据私有 · 经私有 API 鉴权加载</p>
+      </div>
+    </div>
+    <div class="meta">
+      <span class="chip">数据源：检验报告 OCR 解析</span>
+      <span class="chip">数据层私有 · 不外泄</span>
+    </div>
+  </header>
+
+  <div class="stats" id="stats"></div>
+
+  <div class="disclaimer">
+    ⚠️ <b>数据可靠性说明</b>：所有数值由本地 OCR 从检验报告原图自动提取，异常标志部分按参考范围自动推断，未逐条人工复核。
+    <b>医疗决策请以医院纸质报告及主管医生意见为准，本看板仅供筛查参考。</b><br>
+    📌 <b>方法学提示</b>：急诊干化学法检验的肌酐、尿素已按标准系数换算后并入主趋势；不同方法学间可能存在系统偏差。<b>尿液、尿沉渣等定性项不参与换算</b>。
+  </div>
+
+  <div class="status" id="status" style="display:none"></div>
+
+  <div class="wrap" id="wrap"></div>
+
+  <footer>本地离线看板 · 仅供筛查参考　<span id="gen-time"></span></footer>
+
+  <!-- 指标趋势弹层 -->
+  <div id="mask" class="mask"></div>
+  <div id="modal" class="modal" role="dialog">
+    <div class="m-h"><span class="nm" id="m-name"></span><span id="m-badge"></span>
+      <button class="m-x" id="m-x" title="关闭">×</button></div>
+    <div class="m-body">
+      <div class="m-meta" id="m-meta"></div>
+      <div class="m-chart" id="m-chart"><canvas id="m-canvas"></canvas></div>
+      <div class="m-nodata" id="m-nodata"></div>
+      <div class="m-tbl" id="m-tbl"></div>
+    </div>
+  </div>
+
+  <!-- 令牌门禁（无令牌时由 JS 填充） -->
+  <div id="gate-host" style="display:none"></div>
+
+  <script src="assets/app.js"></script>
+</body>
+</html>
