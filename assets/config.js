@@ -10,7 +10,7 @@
  * Bearer 令牌由用户在页面输入后保存在 localStorage（键名见 TOKEN_KEY），不上线、不入库。
  */
 window.DASH_CONFIG = {
-  API_BASE: "https://fleynit-transplant.serveo.net",
+  API_BASE: "https://fleynit-transplant.serveousercontent.com",
   TOKEN_KEY: "transplant_dashboard_token",
   API_BASE_KEY: "transplant_dashboard_api_base"
 };
