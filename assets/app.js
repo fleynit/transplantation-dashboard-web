@@ -95,8 +95,8 @@
 
   async function boot() {
     var base = apiBase();
-    if (!base || base.indexOf("your-private-domain") >= 0) {
-      showGate("请先在 assets/config.js 配置 API_BASE，或通过 ?api= 指定私有服务地址。");
+    if (!base) {
+      showGate("请先在 assets/config.js 配置 API_BASE，或通过 ?api= 指定私有服务地址；亦可在下方“数据服务地址”输入框直接填写隧道地址。");
       return;
     }
     if (!getToken()) { showGate(); return; }
