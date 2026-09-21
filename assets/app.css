@@ -80,6 +80,14 @@ a{color:inherit}
 .ind .ind-block::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--primary);margin-right:7px;vertical-align:middle}
 .paused .ind .ind-block{background:#eceff0;border-left-color:var(--ink-3);color:var(--ink-3)}
 .paused .ind .ind-block::before{background:var(--ink-3)}
+/* 最新结果清单（异常/正常指标）：固定列宽，指标说明列作为「用途 callout」 */
+.tbl.labs{table-layout:fixed}
+.tbl.labs th,.tbl.labs td{vertical-align:top}
+.tbl.labs td.ind{padding:8px 9px}
+.scroll-wide .tbl.labs{min-width:820px}
+/* 指标趋势弹层内的说明 */
+.m-desc-label{display:inline-block;margin-top:4px;color:var(--primary-700);font-weight:600}
+.m-desc{display:inline;color:var(--ink-1);line-height:1.55}
 .badge{font-size:11px;padding:2px 9px;border-radius:999px;font-weight:600;margin-left:8px;white-space:nowrap}
 .b-now{background:var(--alert-weak);color:var(--alert)}
 .b-low{background:var(--good-weak);color:#157a52}

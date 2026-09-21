@@ -247,14 +247,24 @@
 
   // ---------------- 渲染：最新结果清单 ----------------
   var THEAD = "<thead><tr><th>指标（点击查看趋势）</th><th>最近检测日期</th><th>最近结果</th>" +
-    "<th>参考范围</th><th>单位</th><th class='c'>检测次数</th><th class='c'>历史异常次数</th></tr></thead>";
+    "<th>参考范围</th><th>单位</th><th class='c'>检测次数</th><th class='c'>历史异常次数</th>" +
+    "<th>指标说明</th></tr></thead>";
+  // 固定列宽，避免新增「指标说明」列后长文本挤乱版式
+  function LABS_TBL(bodyRows) {
+    return "<table class='tbl labs'><colgroup>" +
+      "<col style='width:15%'><col style='width:9%'><col style='width:9%'><col style='width:12%'>" +
+      "<col style='width:6%'><col style='width:7%'><col style='width:8%'><col style='width:34%'>" +
+      "</colgroup>" + THEAD + "<tbody>" + bodyRows + "</tbody></table>";
+  }
   function rowHtml(s, i) {
     var hl = s.last_flag === "↑" ? "ab-high" : (s.last_flag === "↓" ? "ab-low" : "");
     var fh = s.last_flag ? " <span class='flag " + hl + "'>" + s.last_flag + "</span>" : "";
     var link = "<a class='lk' data-i='" + i + "' href='javascript:void(0)'>" + esc(s.name) + "</a>";
+    var desc = s.desc ? "<span class='ind-block'>" + esc(s.desc) + "</span>" : "—";
     return "<tr class='" + hl + "'><td>" + link + "</td><td>" + esc(s.last_date) + "</td>" +
       "<td class='num'>" + esc(s.last_val) + fh + "</td><td>" + esc(s.ref || "—") + "</td>" +
-      "<td>" + esc(s.unit || "—") + "</td><td class='c'>" + s.n + "</td><td class='c'>" + s.n_abn + "</td></tr>";
+      "<td>" + esc(s.unit || "—") + "</td><td class='c'>" + s.n + "</td><td class='c'>" + s.n_abn +
+      "</td><td class='ind'>" + desc + "</td></tr>";
   }
   function genLatestHtml(series) {
     var abn = [], ok = [];
@@ -267,11 +277,11 @@
       '<div class="section-t">一、最新结果清单（每个指标仅取最近一次检测值）</div>' +
       '<p class="hint">同一指标在多次报告中只保留<b>最近一次</b>结果，按临床关注度排序（肾相关最前）。<b>点击指标名</b>可查看该指标<b>按日期的趋势图</b>及全部历史数值。</p>' +
       '<div class="sub-t bad">异常指标 · 共 ' + abn.length + ' 项（最近一次仍超出参考范围）</div>' +
-      '<div class="card" style="grid-column:1/-1"><div class="tbl-scroll scroll-wide"><table class="tbl">' +
-      THEAD + "<tbody>" + p1 + "</tbody></table></div></div>" +
+      '<div class="card" style="grid-column:1/-1"><div class="tbl-scroll scroll-wide">' +
+      LABS_TBL(p1) + "</div></div>" +
       '<div class="sub-t ok">正常指标 · 共 ' + ok.length + ' 项（最近一次在参考范围内）</div>' +
-      '<div class="card" style="grid-column:1/-1"><div class="tbl-scroll scroll-wide"><table class="tbl">' +
-      THEAD + "<tbody>" + p2 + "</tbody></table></div></div>";
+      '<div class="card" style="grid-column:1/-1"><div class="tbl-scroll scroll-wide">' +
+      LABS_TBL(p2) + "</div></div>";
   }
 
   // ---------------- 渲染：各次报告明细（倒序） ----------------
@@ -311,7 +321,8 @@
       ? '<span class="badge ' + (dir === "↑" ? "b-now" : "b-low") + '">' + (dir === "↑" ? "● 最近一次偏高" : "● 最近一次偏低") + "</span>"
       : '<span class="badge b-ok">○ 最近一次正常</span>';
     el("m-meta").innerHTML = "单位：<b>" + esc(s.unit || "—") + "</b>　参考范围：<b>" + esc(s.ref || "—") +
-      "</b>　·　共 <b>" + s.n + "</b> 次检测，其中异常 <b>" + s.n_abn + "</b> 次　·　分组：" + esc(s.group);
+      "</b>　·　共 <b>" + s.n + "</b> 次检测，其中异常 <b>" + s.n_abn + "</b> 次　·　分组：" + esc(s.group) +
+      (s.desc ? "<br><span class='m-desc-label'>指标说明：</span><span class='m-desc'>" + esc(s.desc) + "</span>" : "");
     // 历史表（倒序：最新在前）
     var h = '<div class="tbl-scroll scroll-mid"><table class="tbl"><thead><tr><th>日期</th><th>结果</th><th>参考范围</th><th>单位</th><th>报告类型</th></tr></thead><tbody>';
     for (var k = s.dates.length - 1; k >= 0; k--) {
