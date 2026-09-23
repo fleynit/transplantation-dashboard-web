@@ -150,19 +150,26 @@ footer{text-align:center;color:var(--ink-3);font-size:12px;padding:22px}
 .m-h{padding:12px 12px}
 .m-chart{height:240px}
 .m-x{width:34px;height:34px;font-size:20px}
-/* 用药清单：手机端改为卡片式堆叠，去掉横向滚动，备注列首屏可见 */
-.tbl-scroll.scroll-wide .tbl.meds{min-width:0}
-.tbl.meds{display:block;table-layout:auto}
-.tbl.meds thead{display:none}
-.tbl.meds tbody,.tbl.meds tr,.tbl.meds td{display:block;width:auto!important}
-.tbl.meds tr{margin-bottom:12px;border:1px solid var(--border);border-radius:10px;padding:10px 12px;background:var(--surface);box-shadow:var(--shadow-sm)}
-.tbl.meds tr.paused{background:#f1f4f5}
-.tbl.meds td{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;border:none;border-bottom:1px dashed var(--border);padding:6px 0;text-align:right}
-.tbl.meds td:last-child{border-bottom:none}
-.tbl.meds td::before{content:attr(data-label);font-weight:600;color:var(--ink-2);text-align:left;flex:0 0 auto}
-.tbl.meds td.name{flex-direction:column;align-items:stretch;border-bottom:1px solid var(--border);padding-bottom:8px;margin-bottom:4px;text-align:left;font-size:14px}
-.tbl.meds td.name::before{display:none}
-.tbl.meds td.note,.tbl.meds td.ind{flex-direction:column;align-items:stretch;text-align:left}
-.tbl.meds td.note::before,.tbl.meds td.ind::before{display:block;margin-bottom:3px;color:var(--ink-3);font-size:12px}
-.tbl.meds td.ind{padding:8px 9px}
+/* 用药清单手机端：竖屏保留列表（隐藏备注/适应性两列，一屏多看几个药）；横屏宽度足够时自动显示全部列（含备注）。规则见文件末尾 @media orientation 块 */
+}
+
+/* 用药清单：手机竖屏保留列表形式（紧凑、一屏多看几个药），隐藏「备注」与「适应性」两列；横屏宽度足够时显示全部列（含备注） */
+@media (max-width: 600px) and (orientation: portrait) {
+  .tbl-scroll.scroll-wide .tbl.meds{min-width:0;width:100%;table-layout:fixed}
+  .tbl.meds thead th:nth-child(5),
+  .tbl.meds thead th:nth-child(6),
+  .tbl.meds tbody td:nth-child(5),
+  .tbl.meds tbody td:nth-child(6){display:none}
+  .tbl.meds thead th:nth-child(1),
+  .tbl.meds tbody td:nth-child(1){width:40%}
+  .tbl.meds thead th:nth-child(2),
+  .tbl.meds tbody td:nth-child(2){width:16%}
+  .tbl.meds thead th:nth-child(3),
+  .tbl.meds tbody td:nth-child(3){width:24%}
+  .tbl.meds thead th:nth-child(4),
+  .tbl.meds tbody td:nth-child(4){width:20%}
+}
+/* 极端情况：横屏但宽度仍<=600（少见），不强制 680 横滚，6 列自适应显示（含备注） */
+@media (max-width: 600px) and (orientation: landscape) {
+  .tbl-scroll.scroll-wide .tbl.meds{min-width:0;table-layout:auto}
 }
