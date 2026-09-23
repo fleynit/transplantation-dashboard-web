@@ -150,26 +150,18 @@ footer{text-align:center;color:var(--ink-3);font-size:12px;padding:22px}
 .m-h{padding:12px 12px}
 .m-chart{height:240px}
 .m-x{width:34px;height:34px;font-size:20px}
-/* 用药清单手机端：竖屏保留列表（隐藏备注/适应性两列，一屏多看几个药）；横屏宽度足够时自动显示全部列（含备注）。规则见文件末尾 @media orientation 块 */
+/* 用药清单手机端：竖屏、横屏均不隐藏任何列。
+   竖屏窄屏：6 列完整保留，固定列宽后横向滑动查看（避免窄屏文字挤成一团）；
+   横屏宽度充足：自动布局铺满整屏，6 列一览无余、无需横滑。 */
 }
 
-/* 用药清单：手机竖屏保留列表形式（紧凑、一屏多看几个药），隐藏「备注」与「适应性」两列；横屏宽度足够时显示全部列（含备注） */
 @media (max-width: 600px) and (orientation: portrait) {
-  .tbl-scroll.scroll-wide .tbl.meds{min-width:0;width:100%;table-layout:fixed}
-  .tbl.meds thead th:nth-child(5),
-  .tbl.meds thead th:nth-child(6),
-  .tbl.meds tbody td:nth-child(5),
-  .tbl.meds tbody td:nth-child(6){display:none}
-  .tbl.meds thead th:nth-child(1),
-  .tbl.meds tbody td:nth-child(1){width:40%}
-  .tbl.meds thead th:nth-child(2),
-  .tbl.meds tbody td:nth-child(2){width:16%}
-  .tbl.meds thead th:nth-child(3),
-  .tbl.meds tbody td:nth-child(3){width:24%}
-  .tbl.meds thead th:nth-child(4),
-  .tbl.meds tbody td:nth-child(4){width:20%}
+  /* 不隐藏任何列，固定列宽 + 横向滚动，保证竖屏也能看到备注与适应性 */
+  .tbl-scroll.scroll-wide .tbl.meds{min-width:600px;width:auto;table-layout:fixed}
+  .tbl.meds{font-size:12.5px}
 }
-/* 极端情况：横屏但宽度仍<=600（少见），不强制 680 横滚，6 列自适应显示（含备注） */
 @media (max-width: 600px) and (orientation: landscape) {
-  .tbl-scroll.scroll-wide .tbl.meds{min-width:0;table-layout:auto}
+  /* 横屏宽度充裕：自动布局铺满全宽，6 列同屏显示，无横滑 */
+  .tbl-scroll.scroll-wide .tbl.meds{min-width:0;width:100%;table-layout:auto}
+  .tbl.meds{font-size:13px}
 }
