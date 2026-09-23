@@ -208,7 +208,7 @@
     if (!m || !m.meds || !m.meds.length) return "";
     var rows = "";
     m.meds.forEach(function (md) {
-      var name = md.name || "—", dose = md.dose || "—", freq = md.freq || "—",
+      var name = md.name || "—", dose = md.dose || "—",
           time = md.time || "—", qty = (md.qty == null || md.qty === "") ? "—" : String(md.qty),
           note = md.note ? md.note.replace(/\n/g, "<br>") : "—",
           indication = md.indication ? md.indication : "—";
@@ -216,7 +216,7 @@
       var cls = paused ? " paused" : "";
       var badge = paused ? ' <span class="flag ab-low">暂停</span>' : "";
       rows += "<tr class='" + cls + "'><td class='name'>" + esc(name) + badge + "</td><td class='num c'>" + esc(dose) +
-        "</td><td class='c'>" + esc(freq) + "</td><td class='c'>" + esc(time) + "</td><td class='num c'>" + esc(qty) +
+        "</td><td class='c'>" + esc(time) + "</td><td class='num c'>" + esc(qty) +
         "</td><td class='note'>" + note + "</td><td class='ind'><span class='ind-block'>" + esc(indication) + "</span></td></tr>";
     });
     return '' +
@@ -224,8 +224,8 @@
       '<p class="hint">数据来源：药疗单，共 <b>' + m.meds.length + '</b> 条医嘱。为医院医嘱快照（非时间序列），与检验报告、居家体征<b>相互独立</b>。' +
       '标「暂停」者为已停用医嘱。</p>' +
       '<div class="card" style="grid-column:1/-1"><div class="tbl-scroll scroll-wide"><table class="tbl meds">' +
-      '<colgroup><col style="width:22%"><col style="width:8%"><col style="width:8%"><col style="width:10%"><col style="width:7%"><col style="width:17%"><col style="width:28%"></colgroup>' +
-      '<thead><tr><th>医嘱内容</th><th class="c">剂量</th><th class="c">频次</th><th class="c">执行时间</th><th class="c">数量</th><th>备注</th><th title="各药的标准临床用途">适应性</th></tr></thead>' +
+      '<colgroup><col style="width:22%"><col style="width:8%"><col style="width:12%"><col style="width:8%"><col style="width:17%"><col style="width:28%"></colgroup>' +
+      '<thead><tr><th>医嘱内容</th><th class="c">剂量</th><th class="c">执行时间</th><th class="c">数量</th><th>备注</th><th title="各药的标准临床用途">适应性</th></tr></thead>' +
       '<tbody>' + rows + "</tbody></table></div></div>";
   }
 
