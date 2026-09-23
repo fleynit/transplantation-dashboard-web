@@ -215,9 +215,12 @@
       var paused = (String(qty) === "0") || ((md.note || "").indexOf("暂停") >= 0);
       var cls = paused ? " paused" : "";
       var badge = paused ? ' <span class="flag ab-low">暂停</span>' : "";
-      rows += "<tr class='" + cls + "'><td class='name'>" + esc(name) + badge + "</td><td class='num c'>" + esc(dose) +
-        "</td><td class='c'>" + esc(time) + "</td><td class='num c'>" + esc(qty) +
-        "</td><td class='note'>" + note + "</td><td class='ind'><span class='ind-block'>" + esc(indication) + "</span></td></tr>";
+      rows += "<tr class='" + cls + "'><td class='name' data-label='药品'>" + esc(name) + badge + "</td>" +
+        "<td class='num c' data-label='剂量'>" + esc(dose) + "</td>" +
+        "<td class='c' data-label='执行时间'>" + esc(time) + "</td>" +
+        "<td class='num c' data-label='数量'>" + esc(qty) + "</td>" +
+        "<td class='note' data-label='备注'>" + note + "</td>" +
+        "<td class='ind' data-label='适应性'><span class='ind-block'>" + esc(indication) + "</span></td></tr>";
     });
     return '' +
       '<div class="section-t">当前用药清单（药疗单）</div>' +
