@@ -251,7 +251,7 @@
   // ---------------- 渲染：最新结果清单 ----------------
   var THEAD = "<thead><tr><th>指标（点击查看趋势）</th><th>最近检测日期</th><th>最近结果</th>" +
     "<th>参考范围</th><th>单位</th><th class='c'>检测次数</th><th class='c'>历史异常次数</th>" +
-    "<th>指标说明</th></tr></thead>";
+    "<th>指标说明 / 改善措施</th></tr></thead>";
   // 固定列宽，避免新增「指标说明」列后长文本挤乱版式
   function LABS_TBL(bodyRows) {
     return "<table class='tbl labs'><colgroup>" +
@@ -263,11 +263,14 @@
     var hl = s.last_flag === "↑" ? "ab-high" : (s.last_flag === "↓" ? "ab-low" : "");
     var fh = s.last_flag ? " <span class='flag " + hl + "'>" + s.last_flag + "</span>" : "";
     var link = "<a class='lk' data-i='" + i + "' href='javascript:void(0)'>" + esc(s.name) + "</a>";
-    var desc = s.desc ? "<span class='ind-block'>" + esc(s.desc) + "</span>" : "—";
+    var ind = "";
+    if (s.desc) ind += "<span class='ind-block'><b class='ind-k'>说明</b>" + esc(s.desc) + "</span>";
+    if (s.measure) ind += "<span class='ind-block measure'><b class='ind-k'>改善</b>" + esc(s.measure) + "</span>";
+    if (!ind) ind = "—";
     return "<tr class='" + hl + "'><td>" + link + "</td><td>" + esc(s.last_date) + "</td>" +
       "<td class='num'>" + esc(s.last_val) + fh + "</td><td>" + esc(s.ref || "—") + "</td>" +
       "<td>" + esc(s.unit || "—") + "</td><td class='c'>" + s.n + "</td><td class='c'>" + s.n_abn +
-      "</td><td class='ind'>" + desc + "</td></tr>";
+      "</td><td class='ind'>" + ind + "</td></tr>";
   }
   function genLatestHtml(series) {
     var abn = [], ok = [];
@@ -325,7 +328,8 @@
       : '<span class="badge b-ok">○ 最近一次正常</span>';
     el("m-meta").innerHTML = "单位：<b>" + esc(s.unit || "—") + "</b>　参考范围：<b>" + esc(s.ref || "—") +
       "</b>　·　共 <b>" + s.n + "</b> 次检测，其中异常 <b>" + s.n_abn + "</b> 次　·　分组：" + esc(s.group) +
-      (s.desc ? "<br><span class='m-desc-label'>指标说明：</span><span class='m-desc'>" + esc(s.desc) + "</span>" : "");
+      (s.desc ? "<br><span class='m-desc-label'>指标说明：</span><span class='m-desc'>" + esc(s.desc) + "</span>" : "") +
+      (s.measure ? "<br><span class='m-desc-label measure'>改善措施：</span><span class='m-measure'>" + esc(s.measure) + "</span>" : "");
     // 历史表（倒序：最新在前）
     var h = '<div class="tbl-scroll scroll-mid"><table class="tbl"><thead><tr><th>日期</th><th>结果</th><th>参考范围</th><th>单位</th><th>报告类型</th></tr></thead><tbody>';
     for (var k = s.dates.length - 1; k >= 0; k--) {

@@ -78,6 +78,11 @@ a{color:inherit}
 .tbl.meds td.ind{padding:8px 9px}
 .ind .ind-block{display:block;font-size:12px;line-height:1.55;color:var(--ink-1);background:var(--primary-weak2);border-left:3px solid var(--primary);border-radius:6px;padding:7px 9px}
 .ind .ind-block::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--primary);margin-right:7px;vertical-align:middle}
+.ind .ind-block + .ind-block{margin-top:6px}
+.ind .ind-block .ind-k{display:inline-block;font-size:10.5px;font-weight:700;color:var(--primary-700);margin-right:3px}
+.ind .ind-block.measure{background:var(--good-weak);border-left-color:var(--good)}
+.ind .ind-block.measure::before{background:var(--good)}
+.ind .ind-block.measure .ind-k{color:#157a52}
 .paused .ind .ind-block{background:#eceff0;border-left-color:var(--ink-3);color:var(--ink-3)}
 .paused .ind .ind-block::before{background:var(--ink-3)}
 /* 最新结果清单（异常/正常指标）：固定列宽，指标说明列作为「用途 callout」 */
@@ -88,6 +93,8 @@ a{color:inherit}
 /* 指标趋势弹层内的说明 */
 .m-desc-label{display:inline-block;margin-top:4px;color:var(--primary-700);font-weight:600}
 .m-desc{display:inline;color:var(--ink-1);line-height:1.55}
+.m-desc-label.measure{color:#157a52}
+.m-measure{display:inline;color:var(--ink-1);line-height:1.55}
 .badge{font-size:11px;padding:2px 9px;border-radius:999px;font-weight:600;margin-left:8px;white-space:nowrap}
 .b-now{background:var(--alert-weak);color:var(--alert)}
 .b-low{background:var(--good-weak);color:#157a52}
