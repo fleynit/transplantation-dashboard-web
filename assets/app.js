@@ -93,28 +93,31 @@
     el("tok").addEventListener("keydown", function (e) { if (e.key === "Enter") go(); });
   }
 
-  async function boot() {
+  async function boot(retry) {
     var base = apiBase();
     if (!base) {
       showGate("请先在 assets/config.js 配置 API_BASE，或通过 ?api= 指定私有服务地址；亦可在下方“数据服务地址”输入框直接填写隧道地址。");
       return;
     }
     if (!getToken()) { showGate(); return; }
-    setStatus("loading", "正在从私有 API 加载数据…");
+    if (retry === undefined) retry = 0;
+    setStatus("loading", retry > 0
+      ? "正在重试连接数据服务（第 " + retry + " 次）…若隧道短暂抖动，稍候将自动恢复。"
+      : "正在从私有 API 加载数据…");
     try {
       var bundle = await apiFetch("/api/bundle");
       render(bundle);
       clearStatus();
     } catch (e) {
-      if (e.status === 401) { setToken(""); showGate("令牌无效或已失效，请重新输入。"); }
-      else if (e.status === 403) { showGate("该地址拒绝了本站请求（来源未在白名单 ALLOW_ORIGINS 中）。"); }
-      else {
-        setStatus("error",
-          "无法连接数据服务（" + apiBase() + "）。常见原因：私有服务未启动、隧道已断开或地址已变更。" +
-          "请重新打开 launcher（deploy/start.bat），并把最新地址填入下方输入框。" +
-          "　原始错误：" + (e && e.message ? e.message : e));
-        showGate("数据服务不可达，可在下方修正地址与令牌后重试。");
-      }
+      if (e.status === 401) { setToken(""); showGate("令牌无效或已失效，请重新输入。"); return; }
+      if (e.status === 403) { showGate("该地址拒绝了本站请求（来源未在白名单 ALLOW_ORIGINS 中）。"); return; }
+      // 网络类错误（隧道偶发抖动/服务器暂不可达）：自动重试 3 次，无需用户操作
+      if (retry < 3) { setTimeout(function () { boot(retry + 1); }, 2500); return; }
+      setStatus("error",
+        "无法连接数据服务（" + apiBase() + "）。常见原因：私有服务未启动、隧道已断开或地址已变更。" +
+        "请重新打开 launcher（deploy/start.bat），并把最新地址填入下方输入框。" +
+        "　原始错误：" + (e && e.message ? e.message : e));
+      showGate("数据服务不可达，可在下方修正地址与令牌后重试。");
     }
   }
 
