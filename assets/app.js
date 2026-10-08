@@ -153,9 +153,9 @@
       '<p class="hint">数据来源：居家自测表，共 <b>' + recs.length + '</b> 天记录，覆盖 <b>' + esc(span[0]) + " ~ " + esc(span[1]) +
       '</b>。体重单位 kg，尿量单位 mL，血压单位 mmHg。本表与检验报告<b>相互独立</b>，仅供日常健康监测与趋势参考。</p>' +
       '<div class="card" style="grid-column:1/-1"><div class="sub-t">体重 与 尿量（同一趋势图，左轴体重 / 右轴尿量）</div>' +
-      '<div class="m-chart" style="height:300px"><canvas id="vitals-wu-canvas"></canvas></div></div>' +
+      '<div class="m-chart" style="height:300px"><canvas id="vitals-wu-canvas"></canvas></div><div class="chart-mm" id="mm-wu"></div></div>' +
       '<div class="card" style="grid-column:1/-1"><div class="sub-t">血压（高压 / 低压）</div>' +
-      '<div class="m-chart" style="height:300px"><canvas id="vitals-bp-canvas"></canvas></div></div>' +
+      '<div class="m-chart" style="height:300px"><canvas id="vitals-bp-canvas"></canvas></div><div class="chart-mm" id="mm-bp"></div></div>' +
       '<div class="card" style="grid-column:1/-1"><div class="tbl-scroll scroll-wide"><table class="tbl">' +
       '<thead><tr><th>日期</th><th>尿量(mL)</th><th>体重(kg)</th><th>血压(mmHg)</th></tr></thead>' +
       '<tbody>' + rows + "</tbody></table></div></div>";
@@ -184,7 +184,7 @@
           tooltip: { callbacks: { label: function (c) { var v = c.parsed.y;
             if (v == null) return c.dataset.label + ": 无记录"; return c.dataset.label + ": " + v; } } } },
         scales: { y: { position: "left", title: { display: true, text: "体重(kg)" }, grid: { drawOnChartArea: true } },
-          y1: { position: "right", title: { display: true, text: "尿量(mL)" }, grid: { drawOnChartArea: false }, beginAtZero: true } } } });
+          y1: { position: "right", title: { display: true, text: "尿量(mL)" }, grid: { drawOnChartArea: false }, beginAtZero: true } } }, plugins: [MINMAX_PLUGIN] });
     }
     // 血压图：裁剪开头无数据段
     var bpStart = labels.length;
@@ -199,8 +199,105 @@
         plugins: { legend: { position: "top" },
           tooltip: { callbacks: { label: function (c) { var v = c.parsed.y;
             if (v == null) return c.dataset.label + ": 无记录"; return c.dataset.label + ": " + v; } } } },
-        scales: { y: { position: "left", title: { display: true, text: "血压(mmHg)" }, grid: { drawOnChartArea: true } } } } });
+        scales: { y: { position: "left", title: { display: true, text: "血压(mmHg)" }, grid: { drawOnChartArea: true } } } }, plugins: [MINMAX_PLUGIN] });
     }
+    // 最高/最低标注说明行
+    setMM("mm-wu", mmCaption([
+      { label: "体重(kg)", data: weight },
+      { label: "尿量(mL)", data: urine }
+    ], labels));
+    setMM("mm-bp", mmCaption([
+      { label: "高压(mmHg)", data: sys.slice(bpStart) },
+      { label: "低压(mmHg)", data: dia.slice(bpStart) }
+    ], labels.slice(bpStart)));
+  }
+
+  // ---------------- 走势图：最高/最低值标注 ----------------
+  // 离线内联实现（Chart.js v4 自带 afterDatasetsDraw，无需 annotation 插件）。
+  var MINMAX_PLUGIN = (function () {
+    function rrect(ctx, x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.arcTo(x + w, y, x + w, y + h, r);
+      ctx.arcTo(x + w, y + h, x, y + h, r);
+      ctx.arcTo(x, y + h, x, y, r);
+      ctx.arcTo(x, y, x + w, y, r);
+      ctx.closePath();
+    }
+    function tag(chart, meta, index, value, label) {
+      var pt = meta.data[index];
+      if (!pt || pt.x == null || pt.y == null) return;
+      var ctx = chart.ctx;
+      var txt = label + " " + (Math.round(value * 100) / 100);
+      ctx.save();
+      ctx.font = "600 11px system-ui,-apple-system,'Segoe UI',sans-serif";
+      var w = ctx.measureText(txt).width + 12, h = 17;
+      var area = chart.chartArea;
+      var up = label === "最高";
+      var px = pt.x;
+      var py = up ? pt.y - 13 : pt.y + 13;
+      px = Math.max(area.left + w / 2, Math.min(px, area.right - w / 2));
+      py = Math.max(area.top + h / 2, Math.min(py, area.bottom - h / 2));
+      ctx.fillStyle = up ? "rgba(214,69,61,.96)" : "rgba(31,157,107,.96)";
+      rrect(ctx, px - w / 2, py - h / 2, w, h, 8);
+      ctx.fill();
+      ctx.fillStyle = "#fff";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(txt, px, py + 0.5);
+      ctx.restore();
+    }
+    return {
+      id: "minMaxTag",
+      afterDatasetsDraw: function (chart) {
+        var sets = chart.data.datasets;
+        for (var di = 0; di < sets.length; di++) {
+          var meta = chart.getDatasetMeta(di);
+          if (meta.hidden) continue;
+          var data = sets[di].data;
+          if (!data || !data.length) continue;
+          var minV = Infinity, maxV = -Infinity, minI = -1, maxI = -1;
+          for (var i = 0; i < data.length; i++) {
+            var v = data[i];
+            if (v == null || isNaN(v)) continue;
+            if (v < minV) { minV = v; minI = i; }
+            if (v > maxV) { maxV = v; maxI = i; }
+          }
+          if (minI < 0 || maxI < 0 || minI === maxI) continue;
+          tag(chart, meta, maxI, maxV, "最高");
+          tag(chart, meta, minI, minV, "最低");
+        }
+      }
+    };
+  })();
+
+  function statOf(data, labels) {
+    var minV = Infinity, maxV = -Infinity, minI = -1, maxI = -1;
+    for (var i = 0; i < data.length; i++) {
+      var v = data[i];
+      if (v == null || isNaN(v)) continue;
+      if (v < minV) { minV = v; minI = i; }
+      if (v > maxV) { maxV = v; maxI = i; }
+    }
+    return { minV: minI < 0 ? null : minV, minL: minI < 0 ? null : labels[minI],
+             maxV: maxI < 0 ? null : maxV, maxL: maxI < 0 ? null : labels[maxI] };
+  }
+  function mmCaption(datasets, labels, unit) {
+    var u = unit ? " " + unit : "";
+    var parts = [];
+    datasets.forEach(function (d) {
+      var st = statOf(d.data, labels);
+      if (st.minV == null) return;
+      var f = function (v) { return Math.round(v * 100) / 100; };
+      parts.push('<span class="mm-i"><b>' + esc(d.label) + '</b> 最高 <i class="mm-max">' + f(st.maxV) + u +
+        '</i> <span class="mm-d">(' + esc(st.maxL || "") + ')</span>　最低 <i class="mm-min">' + f(st.minV) + u +
+        '</i> <span class="mm-d">(' + esc(st.minL || "") + ')</span></span>');
+    });
+    return parts.join("");
+  }
+  function setMM(id, html) {
+    var e = el(id);
+    if (e) { e.innerHTML = html || ""; e.classList.toggle("empty", !html); }
   }
 
   // ---------------- 渲染：用药清单 ----------------
@@ -377,8 +474,9 @@
                 var k = idx[c.dataIndex], f = s.flags[k];
                 var txt = s.qual ? s.values[k] : (c.parsed.y + (s.unit ? " " + s.unit : ""));
                 return (f.abn ? "⚠ " : "") + txt + (f.abn ? " [" + f.dir + "超出参考]" : ""); } } } },
-            scales: { y: yOpts } } });
+            scales: { y: yOpts } }, plugins: [MINMAX_PLUGIN] });
       }
+      setMM("m-mm", mmCaption([{ label: s.name, data: data }], labels, s.unit));
     } else {
       el("m-chart").style.display = "none"; el("m-nodata").style.display = "";
       el("m-nodata").textContent = "该指标仅有 " + s.n + " 次检测记录，不足以绘制趋势图（下方为全部历史数值）。";
