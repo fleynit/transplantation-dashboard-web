@@ -312,7 +312,10 @@
           time = md.time || "—", qty = (md.qty == null || md.qty === "") ? "—" : String(md.qty),
           note = md.note ? md.note.replace(/\n/g, "<br>") : "—",
           indication = md.indication ? md.indication : "—";
-      var paused = (String(qty) === "0") || ((md.note || "").indexOf("暂停") >= 0);
+      // 当前暂停 = 数量为 0，或【最新一条】备注为暂停且未恢复（历史曾暂停但已恢复者不算）
+      var _lines = (md.note || "").split(/\r?\n/).map(function (s) { return s.trim(); }).filter(function (s) { return s; });
+      var _last = _lines.length ? _lines[_lines.length - 1] : "";
+      var paused = (String(qty) === "0") || (_last.indexOf("暂停") >= 0 && _last.indexOf("恢复") < 0);
       var cls = paused ? " paused" : "";
       var badge = paused ? ' <span class="flag ab-low">暂停</span>' : "";
       rows += "<tr class='" + cls + "'><td class='name' data-label='药品'>" + esc(name) + badge + "</td>" +
