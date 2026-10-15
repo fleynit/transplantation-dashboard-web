@@ -309,19 +309,20 @@
     var rows = "";
     m.meds.forEach(function (md) {
       var name = md.name || "—", dose = md.dose || "—",
-          time = md.time || "—", qty = (md.qty == null || md.qty === "") ? "—" : String(md.qty),
+          time = md.time || "—", qtyRaw = md.qty,
+          qty = (qtyRaw == null || qtyRaw === "") ? "—" : esc(String(qtyRaw)).replace(/\n/g, "<br>"),
           note = md.note ? md.note.replace(/\n/g, "<br>") : "—",
           indication = md.indication ? md.indication : "—";
       // 当前暂停 = 数量为 0，或【最新一条】备注为暂停且未恢复（历史曾暂停但已恢复者不算）
       var _lines = (md.note || "").split(/\r?\n/).map(function (s) { return s.trim(); }).filter(function (s) { return s; });
       var _last = _lines.length ? _lines[_lines.length - 1] : "";
-      var paused = (String(qty) === "0") || (_last.indexOf("暂停") >= 0 && _last.indexOf("恢复") < 0);
+      var paused = (String(qtyRaw) === "0") || (_last.indexOf("暂停") >= 0 && _last.indexOf("恢复") < 0);
       var cls = paused ? " paused" : "";
       var badge = paused ? ' <span class="flag ab-low">暂停</span>' : "";
       rows += "<tr class='" + cls + "'><td class='name' data-label='药品'>" + esc(name) + badge + "</td>" +
         "<td class='num c' data-label='剂量'>" + esc(dose) + "</td>" +
         "<td class='c' data-label='执行时间'>" + esc(time) + "</td>" +
-        "<td class='num c' data-label='数量'>" + esc(qty) + "</td>" +
+        "<td class='num c' data-label='数量'>" + qty + "</td>" +
         "<td class='note' data-label='备注'>" + note + "</td>" +
         "<td class='ind' data-label='适应性'><span class='ind-block'>" + esc(indication) + "</span></td></tr>";
     });
