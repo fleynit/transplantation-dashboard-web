@@ -312,7 +312,11 @@
           time = md.time || "—", qtyRaw = md.qty,
           qty = (qtyRaw == null || qtyRaw === "") ? "—" : esc(String(qtyRaw)).replace(/\n/g, "<br>"),
           note = md.note ? md.note.replace(/\n/g, "<br>") : "—",
-          indication = md.indication ? md.indication : "—";
+          indication = md.indication ? md.indication : "";
+          adverse = (md.adverse_reactions && md.adverse_reactions.length) ? md.adverse_reactions.join("；") : "";
+          indHtml = "";
+          if (indication) indHtml += "<span class='ind-block'>" + esc(indication) + "</span>";
+          if (adverse) indHtml += "<span class='ind-block adv-block'>不良反应：" + esc(adverse) + "</span>";
       // 当前暂停 = 数量为 0，或【最新一条】备注为暂停且未恢复（历史曾暂停但已恢复者不算）
       var _lines = (md.note || "").split(/\r?\n/).map(function (s) { return s.trim(); }).filter(function (s) { return s; });
       var _last = _lines.length ? _lines[_lines.length - 1] : "";
@@ -324,15 +328,15 @@
         "<td class='c' data-label='执行时间'>" + esc(time) + "</td>" +
         "<td class='num c' data-label='数量'>" + qty + "</td>" +
         "<td class='note' data-label='备注'>" + note + "</td>" +
-        "<td class='ind' data-label='适应性'><span class='ind-block'>" + esc(indication) + "</span></td></tr>";
+        "<td class='ind' data-label='适应性 / 不良反应'>" + indHtml + "</td></tr>";
     });
     return '' +
       '<div class="section-t">当前用药清单（药疗单）</div>' +
       '<p class="hint">数据来源：药疗单，共 <b>' + m.meds.length + '</b> 条医嘱。为医院医嘱快照（非时间序列），与检验报告、居家体征<b>相互独立</b>。' +
-      '标「暂停」者为已停用医嘱。手机端可<b>左右滑动</b>查看全部 6 列（药品名称 / 剂量 / 执行时间 / 数量 / 备注 / 适应性）。</p>' +
+      '标「暂停」者为已停用医嘱。手机端可<b>左右滑动</b>查看全部 6 列（药品名称 / 剂量 / 执行时间 / 数量 / 备注 / 适应性·不良反应）。</p>' +
       '<div class="card" style="grid-column:1/-1"><div class="tbl-scroll scroll-wide"><table class="tbl meds">' +
       '<colgroup><col style="width:22%"><col style="width:8%"><col style="width:12%"><col style="width:8%"><col style="width:17%"><col style="width:28%"></colgroup>' +
-      '<thead><tr><th>医嘱内容</th><th class="c">剂量</th><th class="c">执行时间</th><th class="c">数量</th><th>备注</th><th title="各药的标准临床用途">适应性</th></tr></thead>' +
+      '<thead><tr><th>医嘱内容</th><th class="c">剂量</th><th class="c">执行时间</th><th class="c">数量</th><th>备注</th><th title="各药的标准临床用途与常见不良反应">适应性 / 不良反应</th></tr></thead>' +
       '<tbody>' + rows + "</tbody></table></div></div>";
   }
 

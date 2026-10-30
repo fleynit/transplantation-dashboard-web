@@ -85,6 +85,8 @@ a{color:inherit}
 .ind .ind-block.measure .ind-k{color:#157a52}
 .paused .ind .ind-block{background:#eceff0;border-left-color:var(--ink-3);color:var(--ink-3)}
 .paused .ind .ind-block::before{background:var(--ink-3)}
+.ind .adv-block{background:#fbeceb;border-left-color:var(--alert)}
+.ind .adv-block::before{background:var(--alert)}
 /* 最新结果清单（异常/正常指标）：固定列宽，指标说明列作为「用途 callout」 */
 .tbl.labs{table-layout:fixed}
 .tbl.labs th,.tbl.labs td{vertical-align:top}
