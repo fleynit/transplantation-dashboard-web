@@ -306,7 +306,7 @@
   // ---------------- 渲染：用药清单 ----------------
   function genMedsHtml(m) {
     if (!m || !m.meds || !m.meds.length) return "";
-    var rows = "";
+    var rows = ""; var srows = "";
     m.meds.forEach(function (md) {
       var name = md.name || "—", dose = md.dose || "—",
           time = md.time || "—", qtyRaw = md.qty,
@@ -329,6 +329,9 @@
         "<td class='num c' data-label='数量'>" + qty + "</td>" +
         "<td class='note' data-label='备注'>" + note + "</td>" +
         "<td class='ind' data-label='适应性 / 不良反应'>" + indHtml + "</td></tr>";
+      var sInd = indication ? "<span class='ind-block'>" + esc(indication) + "</span>" : "<span style='color:#94a3a8'>—</span>";
+      var sAdv = adverse ? "<span class='ind-block adv-block'>不良反应：" + esc(adverse) + "</span>" : "<span style='color:#94a3a8'>—</span>";
+      srows += "<tr><td class='name'>" + esc(name) + badge + "</td><td>" + sInd + "</td><td>" + sAdv + "</td></tr>";
     });
     return '' +
       '<div class="section-t">当前用药清单（药疗单）</div>' +
@@ -337,7 +340,11 @@
       '<div class="card" style="grid-column:1/-1"><div class="tbl-scroll scroll-wide"><table class="tbl meds">' +
       '<colgroup><col style="width:22%"><col style="width:8%"><col style="width:12%"><col style="width:8%"><col style="width:17%"><col style="width:28%"></colgroup>' +
       '<thead><tr><th>医嘱内容</th><th class="c">剂量</th><th class="c">执行时间</th><th class="c">数量</th><th>备注</th><th title="各药的标准临床用途与常见不良反应">适应性 / 不良反应</th></tr></thead>' +
-      '<tbody>' + rows + "</tbody></table></div></div>";
+      '<tbody>' + rows + "</tbody></table></div></div>" +
+      '<div class="card" style="grid-column:1/-1"><div class="sub-t">用药安全性速查（适应性 / 不良反应）</div><div class="tbl-scroll scroll-wide"><table class="tbl meds">' +
+      '<colgroup><col style="width:22%"><col style="width:40%"><col style="width:38%"></colgroup>' +
+      '<thead><tr><th>药品名称</th><th>适应性（临床用途）</th><th>不良反应</th></tr></thead>' +
+      '<tbody>' + srows + "</tbody></table></div></div>";
   }
 
   // ---------------- 渲染：数据覆盖 ----------------
